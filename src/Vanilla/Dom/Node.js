@@ -28,7 +28,7 @@ exports.nodeListItem_ = function(pure, index, list) {
 }
 exports.traverseNodeList_ = function(ret, func, list) {
     for (var i = 0; i < list.length; ++i) {
-        func(list[i]);
+        func(list[i])();
     }
     return ret;
 }
