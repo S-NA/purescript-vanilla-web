@@ -16,6 +16,9 @@ exports.classList = function(elem) {
 exports.setAttribute_ = function(name, elem, value) {
     elem.setAttribute(name, value);
 }
+exports.getAttribute_ = function(name, elem) {
+    return elem.getAttribute(name);
+}
 exports.remove = function(elem) {
     return function() { // Effect Unit
         elem.remove();
@@ -28,6 +31,11 @@ exports.getStyle = function(s) {
 }
 exports.setStyle_ = function(s, elem, x) {
     elem.style[s] = x;
+}
+exports.tagName = function(elem) {
+    return function() {
+        return elem.tagName;
+    }
 }
 
 exports.fromEventTarget_ = function(just, nothing, anyTarget) {

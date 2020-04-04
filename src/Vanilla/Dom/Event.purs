@@ -6,8 +6,7 @@
 module Vanilla.Dom.Event
     ( Event, eventTarget
     , class EventTarget, addEventListener, removeEventListener, dispatchEvent
-    , unsafeAddEventListener, unsafeRemoveEventListener, unsafeDispatchEvent
-    , AnyEventTarget, class FromEventTarget, fromEventTarget, fromEventTarget'
+    , AnyEventTarget, class FromEventTarget, fromEventTarget, fromEventTargetEx
     ) where
 
 import Prelude
@@ -27,55 +26,48 @@ foreign import data Event :: Type
 foreign import eventTarget :: Event -> AnyEventTarget
 
 
--- | Class of objects that can have events
-class EventTarget a where
-    -- [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
-    addEventListener :: String -- ^ Event type (like `click`)
-                     -> (Event -> Effect Unit) -- ^ Callback
-                     -> a -- ^ Target
-                     -> Effect Unit
-    -- [removeEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener)
-    removeEventListener :: String -- ^ Event type (like `click`)
-                        -> (Event -> Effect Unit) -- ^ Callback
-                        -> a -- ^ Target
-                        -> Effect Unit
-    -- [dispatchEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent)
-    dispatchEvent :: Event -- ^ Event to dispatch
-                  -> a
-                  -> Effect Boolean
+-- | Class of foreign objects that can have events. If your object is an
+-- | EventTarget descendant, instantiate this class and use functions below.
+class EventTarget et
+
+-- [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+addEventListener :: forall et. EventTarget et
+    => String -- ^ Event type (like `click`)
+    -> (Event -> Effect Unit) -- ^ Callback
+    -> et -- ^ Target
+    -> Effect Unit
+addEventListener type_ = runEffectFn3 addEventListener_ type_ <<< mkEffectFn1
+-- [removeEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener)
+removeEventListener :: forall et. EventTarget et 
+    => String -- ^ Event type (like `click`)
+    -> (Event -> Effect Unit) -- ^ Callback
+    -> et -- ^ Target
+    -> Effect Unit
+removeEventListener type_ = runEffectFn3 removeEventListener_ type_ <<< mkEffectFn1
+-- [dispatchEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent)
+dispatchEvent :: forall et. EventTarget et
+    => Event -- ^ Event to dispatch
+    -> et
+    -> Effect Boolean
+dispatchEvent = runEffectFn2 dispatchEvent_
 
 -- JS implementation of those methods
-foreign import addListener :: forall a.
+foreign import addEventListener_ :: forall a.
     EffectFn3 String (EffectFn1 Event Unit) a Unit
-foreign import removeListener :: forall a.
+foreign import removeEventListener_ :: forall a.
     EffectFn3 String (EffectFn1 Event Unit) a Unit
-foreign import dispatch :: forall a.
+foreign import dispatchEvent_ :: forall a.
     EffectFn2 Event a Boolean
--- | Default JS implementation of EventTarget methods. Use these to quickly
--- | create instances for conforming foreign types.
-unsafeAddEventListener :: forall a.
-    String -> (Event -> Effect Unit) -> a -> Effect Unit
-unsafeAddEventListener tpe = runEffectFn3 addListener tpe <<< mkEffectFn1
--- | Same as above
-unsafeRemoveEventListener :: forall a.
-    String -> (Event -> Effect Unit) -> a -> Effect Unit
-unsafeRemoveEventListener tpe = runEffectFn3 removeListener tpe <<< mkEffectFn1
--- | Same as above
-unsafeDispatchEvent :: forall a. Event -> a -> Effect Boolean
-unsafeDispatchEvent = runEffectFn2 dispatch
 
 
 -- | Polymorphic type for EventTarget return values
 foreign import data AnyEventTarget :: Type
-instance anyEventTarget :: EventTarget AnyEventTarget where
-    addEventListener = unsafeAddEventListener
-    removeEventListener = unsafeRemoveEventListener
-    dispatchEvent = unsafeDispatchEvent
+instance anyEventTarget :: EventTarget AnyEventTarget
 
 -- | Class to get concrete type of event target. Instances are to be created
 -- | with JS.
 class FromEventTarget a where
     fromEventTarget :: AnyEventTarget -> Maybe a
 -- | Unsafe wrapper
-fromEventTarget' :: forall a. FromEventTarget a => AnyEventTarget -> a
-fromEventTarget' et = unsafePartial $ fromJust $ fromEventTarget et
+fromEventTargetEx :: forall a. FromEventTarget a => AnyEventTarget -> a
+fromEventTargetEx et = unsafePartial $ fromJust $ fromEventTarget et

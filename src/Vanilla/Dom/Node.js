@@ -1,6 +1,6 @@
 "use strict";
 
-exports.unsafeTextContent = function(node) {
+exports.textContent_ = function(node) {
     var cont = node.textContent;
     if (cont == null) {
         return "";
@@ -8,22 +8,23 @@ exports.unsafeTextContent = function(node) {
         return cont;
     }
 }
-exports.unsafeChildNodes = function(node) {
-    return node.childNodes;
+exports.childNodes = function(node) {
+    return function() {
+        return node.childNodes;
+    }
 }
-exports.unsafeAppendChild_ = function(p, c) {
-    console.error("appending child", c.innerHTML);
+exports.appendChild_ = function(p, c) {
     return p.appendChild(c);
 }
 
-exports.nodeListLength = function(list) {
-    return list.length;
+exports.nodeListLength_ = function(pure, list) {
+    return pure(list.length);
 }
-exports.nodeListItem_ = function(index, list) {
+exports.nodeListItem_ = function(pure, index, list) {
     if (index < 0 || index >= list.length) {
         throw new ReferenceError("Accessing NodeList item out of bounds");
     }
-    return list.item(index);
+    return pure(list.item(index));
 }
 exports.traverseNodeList_ = function(ret, func, list) {
     for (var i = 0; i < list.length; ++i) {
@@ -32,9 +33,9 @@ exports.traverseNodeList_ = function(ret, func, list) {
     return ret;
 }
 
-exports.unsafeQuerySelector_ = function(q, node) {
+exports.querySelector_ = function(q, node) {
     return node.querySelector(q);
 }
-exports.unsafeQuerySelectorAll_ = function(q, node) {
+exports.querySelectorAll_ = function(q, node) {
     return node.querySelectorAll(q);
 }

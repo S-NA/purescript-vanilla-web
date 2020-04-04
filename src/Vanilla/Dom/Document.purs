@@ -34,10 +34,7 @@ createElement = runEffectFn1 createElement_
 foreign import createElement_ :: EffectFn1 String Element
 
 
-instance docEventTarget :: EventTarget Document where
-    addEventListener = Ev.unsafeAddEventListener
-    removeEventListener = Ev.unsafeRemoveEventListener
-    dispatchEvent = Ev.unsafeDispatchEvent
+instance docEventTarget :: EventTarget Document
 
 instance docFromEventTarget :: FromEventTarget Document where
     fromEventTarget = runFn3 fromEventTarget_ Just Nothing
@@ -46,10 +43,7 @@ foreign import fromEventTarget_ :: Fn3 (forall a. a -> Maybe a)
                                        Ev.AnyEventTarget
                                        (Maybe Document)
 
-instance docNode :: Node Document where
-    textContent = Nd.unsafeTextContent
-    childNodes = Nd.unsafeChildNodes
-    appendAnyChild = Nd.unsafeAppendChild
+instance docNode :: Node Document
 
 instance docFromNode :: FromNode Document where
     fromNode = runFn3 fromNode_ Just Nothing
@@ -58,6 +52,4 @@ foreign import fromNode_ :: Fn3 (forall a. a -> Maybe a)
                                 Nd.AnyNode
                                 (Maybe Document)
 
-instance docQuery :: QueryNode Document where
-    querySelector = Nd.unsafeQuerySelector
-    querySelectorAll = Nd.unsafeQuerySelectorAll
+instance docQuery :: QueryNode Document
