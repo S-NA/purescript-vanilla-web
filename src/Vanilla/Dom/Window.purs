@@ -9,7 +9,7 @@ module Vanilla.Dom.Window
 
 import Data.Unit (Unit)
 import Effect (Effect)
-import Effect.Uncurried (EffectFn2, runEffectFn2, EffectFn1, runEffectFn1)
+import Effect.Uncurried (EffectFn2, runEffectFn2)
 
 -- | Window type
 foreign import data Window :: Type
@@ -27,6 +27,7 @@ foreign import setCustomAttribute_ :: forall a. EffectFn2 String a Unit
 -- | Get a global value in window. The caller chooses types.
 getCustomAttribute :: forall a.
        String -- ^ Attribute name
+    -> a -- ^ Default value
     -> Effect a -- ^ Attribute value
-getCustomAttribute = runEffectFn1 getCustomAttribute_
-foreign import getCustomAttribute_ :: forall a. EffectFn1 String a
+getCustomAttribute = runEffectFn2 getCustomAttribute_
+foreign import getCustomAttribute_ :: forall a. EffectFn2 String a a
