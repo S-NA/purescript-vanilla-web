@@ -14,7 +14,7 @@ instructions](./README.md#Building-for-development) and build the library. Then
 you can generate the docs with with purescript compiler:
 `npx purs docs --format html src/**/*.purs .spago/**/src/**/*.purs`
 Next you can open and browse the docs in your favourite browser:
-`firefox ./generated-docs/html/Browser.WebRequest.html`
+`firefox ./generated-docs/html/Vanilla.Dom.Event.html`
 There will be a lot of unrelated library documentation there, that's purescript
 current limitation. Fortunately the modules you are interested in start with
 Vanilla and so are at the bottom.
