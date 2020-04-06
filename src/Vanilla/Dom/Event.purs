@@ -30,21 +30,21 @@ foreign import eventTarget :: Event -> AnyEventTarget
 -- | EventTarget descendant, instantiate this class and use functions below.
 class EventTarget et
 
--- [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+-- | [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
 addEventListener :: forall et. EventTarget et
     => String -- ^ Event type (like `click`)
     -> (Event -> Effect Unit) -- ^ Callback
     -> et -- ^ Target
     -> Effect Unit
 addEventListener type_ = runEffectFn3 addEventListener_ type_ <<< mkEffectFn1
--- [removeEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener)
+-- | [removeEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener)
 removeEventListener :: forall et. EventTarget et 
     => String -- ^ Event type (like `click`)
     -> (Event -> Effect Unit) -- ^ Callback
     -> et -- ^ Target
     -> Effect Unit
 removeEventListener type_ = runEffectFn3 removeEventListener_ type_ <<< mkEffectFn1
--- [dispatchEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent)
+-- | [dispatchEvent](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent)
 dispatchEvent :: forall et. EventTarget et
     => Event -- ^ Event to dispatch
     -> et

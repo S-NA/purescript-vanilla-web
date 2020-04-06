@@ -18,8 +18,9 @@ import Partial.Unsafe (unsafePartial)
 import Vanilla.Dom.Event (class EventTarget)
 
 
--- | Class of Node foreign objects, like Element and Document If your object is
--- | an EventTarget descendant, instantiate this class and use functions below.
+-- | Class of Node foreign objects, like Element and Document. If your object is
+-- | conformant, that is `obj instanceof Node == true`, instantiate this class
+-- | and use functions below.
 class EventTarget a <= Node a
 
 -- | Text content of node.
